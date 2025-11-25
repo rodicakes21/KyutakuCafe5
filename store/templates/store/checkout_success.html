@@ -1,0 +1,9 @@
+{% extends "store/base.html" %}
+
+{% block title %}Order Complete - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+<h2>Thank you for your order!</h2>
+<p>Your checkout has been recorded!</p>
+<a href="{% url 'home' %}" class="btn">Back to Home</a>
+{% endblock %}

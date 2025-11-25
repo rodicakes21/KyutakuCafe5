@@ -1,0 +1,40 @@
+{% extends "store/base.html" %}
+
+{% block title %}My Receipts - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+
+<h2 style="text-align:center; color:#FFB3E6; text-shadow:0 0 10px #FF8AD4;">
+    My Receipts
+</h2>
+
+{% if orders %}
+    <div style="max-width:800px; margin:30px auto;">
+        {% for order in orders %}
+            <div style="
+                background:rgba(40,15,55,0.8);
+                padding:20px;
+                margin-bottom:20px;
+                border-radius:15px;
+                border:2px solid #FF8AD4;
+                box-shadow:0 0 15px rgba(255,138,212,0.3);
+            ">
+                <p>
+                    <strong>Receipt #{{ order.id }}</strong><br>
+                    Date: {{ order.created_at|date:"F d, Y h:i A" }}<br>
+                    Total: ₱{{ order.total_price }}
+                </p>
+
+                <a href="{% url 'receipt' order.id %}" class="btn">
+                    View Receipt
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p style="text-align:center; margin-top:40px; font-size:18px;">
+        You have no receipts yet.
+    </p>
+{% endif %}
+
+{% endblock %}

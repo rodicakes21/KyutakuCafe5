@@ -1,0 +1,30 @@
+{% extends "store/base.html" %}
+
+{% block title %}Find My Receipt{% endblock %}
+
+{% block content %}
+
+<h2 style="text-align:center; color:#FFB3E6;">Find Your Receipt</h2>
+
+<div style="
+    max-width:450px; 
+    margin:20px auto; 
+    background:rgba(40,15,55,0.8);
+    padding:20px;
+    border-radius:15px;
+    border:2px solid #FF8AD4;
+">
+    <form method="POST">
+        {% csrf_token %}
+        <label>Receipt Code:</label>
+        <input type="text" name="receipt_code" placeholder="RCP-XXXXXX" required
+            style="width:100%; padding:10px; border-radius:8px; border:2px solid #FF8AD4; background:#2A0E35; color:white;">
+
+        <button type="submit" 
+            style="margin-top:15px; width:100%; padding:12px; border-radius:10px; background:#FF8AD4; font-weight:bold; border:none;">
+            View Receipt
+        </button>
+    </form>
+</div>
+
+{% endblock %}

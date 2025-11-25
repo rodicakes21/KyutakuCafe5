@@ -1,0 +1,47 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+
+<div class="product-detail-container" style="max-width: 900px; margin: 50px auto; display: flex; gap: 40px; background: rgba(40,15,55,0.85); padding: 30px; border-radius: 20px; box-shadow: 0 0 30px rgba(255,138,212,0.3);">
+
+    <!-- Product Image -->
+    <div class="product-image" style="flex: 1;">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+             style="width: 100%; border-radius: 15px; transition: transform 0.3s; box-shadow: 0 0 20px rgba(255,138,212,0.4);">
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start; color: #FFE6F7;">
+        
+        <p style="font-weight:bold; color:#FFB3E6; margin-bottom:5px;">Name:</p>
+        <h2 style="font-size: 2em; margin-bottom: 15px; color:#FFB3E6; text-shadow: 0 0 10px #FF8AD4;">{{ product.name }}</h2>
+
+        <p style="font-weight:bold; color:#FFB3E6; margin-bottom:5px;">Description:</p>
+        <p class="detail-desc" style="line-height: 1.6; margin-bottom: 20px;">{{ product.description|default:"No description available." }}</p>
+
+        <p style="font-weight:bold; color:#FFB3E6; margin-bottom:5px;">Price:</p>
+        <h3 class="price" style="font-size: 1.8em; font-weight: bold; margin-bottom: 25px; color:#FF69B4;">₱{{ product.price }}</h3>
+
+        <a href="{% url 'cart_add' product.id %}" class="btn" 
+           style="background: linear-gradient(45deg, #FF69B4, #FF8AD4); padding: 15px 25px; border-radius: 12px; text-align: center; font-weight: bold; color:#fff; text-decoration:none; transition: transform 0.2s;">
+           Add to Cart
+        </a>
+    </div>
+</div>
+
+<!-- Hover effect for image -->
+<style>
+    .product-image img:hover {
+        transform: scale(1.05);
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255,138,212,0.5);
+    }
+</style>
+
+{% endblock %}

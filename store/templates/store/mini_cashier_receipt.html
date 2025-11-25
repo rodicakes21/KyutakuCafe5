@@ -1,0 +1,103 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Cashier Receipt - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+
+<style>
+.mini-container {
+    width: 350px;
+    margin: 40px auto;
+    background: #f8c7df;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #ff7eba;
+    box-shadow: 0 0 15px rgba(255,105,180,0.4);
+    color: #4b004b;
+    font-weight: bold;
+}
+.print-btn {
+    margin-top: 12px;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    background: #ff4fa8;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff4fa8;
+}
+@media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { position: absolute; top: 0; left: 0; }
+}
+</style>
+
+<div id="printArea" class="mini-container">
+
+    <!-- Logo -->
+    <div style="text-align:center; margin-bottom:10px;">
+        <img src="{% static 'images/kyutaku_logo.jfif' %}"
+             style="width:80px; border-radius:10px; vertical-align:middle;">
+        <span style="
+            font-size:20px;
+            margin-left:6px;
+            vertical-align:middle;
+            font-family:'Poppins';
+            font-weight:700;
+            color:#b4006e;
+            text-shadow:0 0 3px #ffd6ef;
+        ">
+            ✿ Kyutaku's Café
+        </span>
+    </div>
+
+    <div style="text-align:center; font-size:13px;">
+        <div>Living in this hell country</div>
+        <div>12th Ave. Qc.</div>
+    </div>
+
+    <p><strong>Date:</strong> {{ order.created_at|date:"M d, Y h:i A" }}</p>
+    <p><strong>Order No.:</strong> {{ order.id }}</p>
+
+    <hr style="border:1px dashed #b4006e;">
+
+    {% for item in order.items.all %}
+    <div style="display:flex; justify-content:space-between;">
+        <span>{{ item.product.name }} ×{{ item.quantity }}</span>
+        <span>₱{{ item.total_price }}</span>
+    </div>
+    {% endfor %}
+
+    <hr style="border:1px dashed #b4006e;">
+
+    <div style="display:flex; justify-content:space-between;">
+        <strong>Total:</strong>
+        <strong>₱{{ order.total_price }}</strong>
+    </div>
+
+    <div style="display:flex; justify-content:space-between;">
+        <strong>Cash:</strong>
+        <span>₱{{ order.cash_received|default:"0.00" }}</span>
+    </div>
+
+    <div style="display:flex; justify-content:space-between;">
+        <strong>Change:</strong>
+        <span>₱{{ order.change_given|default:"0.00" }}</span>
+    </div>
+
+    <hr style="border:1px dashed #b4006e;">
+
+    <p style="text-align:center; font-size:14px; color:#a40071;">
+        Status: <strong>{{ order.payment_status|title }}</strong>
+    </p>
+
+    <button class="print-btn" onclick="window.print()">PRINT RECEIPT</button>
+
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,44 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Contact Us - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+
+<div style="
+    max-width:700px; 
+    margin:40px auto; 
+    background:rgba(40,15,55,0.85); 
+    padding:30px; 
+    border-radius:15px; 
+    border:2px solid #FF8AD4;
+    box-shadow:0 0 20px rgba(255,138,212,0.3);">
+
+    <h2 style="text-align:center; color:#FFB3E6; text-shadow:0 0 10px #FF8AD4; margin-bottom:20px;">
+        Contact Information
+    </h2>
+
+    <p style="font-size:16px; color:#FFE6F7; line-height:1.8;">
+        We'd love to hear from you! Whether you have questions, feedback, or just want to say hello, 
+        here’s how you can reach us:
+    </p>
+
+    <div style="margin-top:25px; font-size:17px; line-height:1.9; color:#FFB3E6;">
+        <p><strong>📍 Address:</strong> 12th Avenue, Quezon City, Philippines</p>
+        <p><strong>📞 Phone:</strong> 0912-345-6789</p>
+        <p><strong>✉ Email:</strong> kyutakuhscafe@gmail.com</p>
+        <p><strong>🕒 Opening Hours:</strong><br>
+            &nbsp;&nbsp;&nbsp;Monday – Friday: 9:00 AM – 8:00 PM<br>
+            &nbsp;&nbsp;&nbsp;Saturday – Sunday: 10:00 AM – 9:00 PM
+        </p>
+    </div>
+
+    <div style="text-align:center; margin-top:25px;">
+        <img src="{% static 'images/kyutaku.jfif' %}" 
+             alt="Kuromi"
+             style="width:120px; border-radius:10px; box-shadow:0 0 15px #FF8AD4;">
+    </div>
+
+</div>
+
+{% endblock %}

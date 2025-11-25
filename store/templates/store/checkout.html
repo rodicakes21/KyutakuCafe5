@@ -1,0 +1,119 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Checkout - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+
+<div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin:40px auto; max-width:1000px;">
+
+    <!-- Checkout Form -->
+    <div style="
+        flex:1 1 400px; 
+        padding:25px; 
+        background: rgba(40,15,55,0.85); 
+        border-radius:15px; 
+        border:2px solid #FF8AD4; 
+        box-shadow:0 0 20px rgba(255,138,212,0.3);
+    ">
+        <h2 style="text-align:center; color:#FFB3E6; text-shadow:0 0 10px #FF8AD4;">
+            Complete Your Order
+        </h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:#FF8AD4; text-align:center; margin-top:10px;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="">
+            {% csrf_token %}
+
+            <label style="display:block; margin-top:15px;">Full Name</label>
+            <input type="text" name="name" required 
+                   style="width:100%; padding:10px; border-radius:8px; 
+                   border:1px solid #FF8AD4; background:#1A0B1F; color:#FFE6F7;">
+
+            <label style="display:block; margin-top:15px;">Address</label>
+            <textarea name="address" required 
+                      style="width:100%; padding:10px; border-radius:8px; 
+                      border:1px solid #FF8AD4; background:#1A0B1F; color:#FFE6F7;" rows="3"></textarea>
+
+            <label style="display:block; margin-top:15px;">Email</label>
+            <input type="email" name="email" required 
+                   style="width:100%; padding:10px; border-radius:8px; 
+                   border:1px solid #FF8AD4; background:#1A0B1F; color:#FFE6F7;">
+
+            <label style="display:block; margin-top:15px;">Phone Number</label>
+            <input type="tel" name="phone" required 
+                   style="width:100%; padding:10px; border-radius:8px; 
+                   border:1px solid #FF8AD4; background:#1A0B1F; color:#FFE6F7;">
+
+            <button type="submit" class="btn" 
+                    style="display:block; margin:25px auto 0 auto;">
+                Place Order
+            </button>
+        </form>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div style="
+        flex:1 1 300px; padding:20px; 
+        background: rgba(40,15,55,0.7); 
+        border-radius:15px; 
+        border:2px solid #FF8AD4; 
+        box-shadow:0 0 15px rgba(255,138,212,0.3); 
+        max-height:600px; 
+        overflow-y:auto;
+    ">
+        <h3 style="text-align:center; color:#FFB3E6; margin-bottom:15px;">
+            Your Cart
+        </h3>
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+                <div style="
+                    display:flex; 
+                    align-items:center; 
+                    margin-bottom:15px; 
+                    border-bottom:1px solid #FF8AD4; 
+                    padding-bottom:10px;">
+                    
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" 
+                             alt="{{ item.product.name }}" 
+                             style="width:60px; height:60px; object-fit:cover; 
+                             border-radius:8px; border:1px solid #FF8AD4; 
+                             margin-right:10px;">
+                    {% else %}
+                        <img src="{% static 'images/noimage.png' %}" 
+                             alt="No image" 
+                             style="width:60px; height:60px; object-fit:cover; 
+                             border-radius:8px; border:1px solid #FF8AD4; 
+                             margin-right:10px;">
+                    {% endif %}
+
+                    <div>
+                        <p style="margin:0; color:#FFE6F7;">{{ item.product.name }}</p>
+                        <p style="margin:0; font-size:14px; color:#FFB3E6;">
+                            {{ item.quantity }} × ₱{{ item.product.price }}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <h4 style="text-align:right; color:#FFB3E6; margin-top:10px;">
+                Grand Total: ₱{{ cart_total }}
+            </h4>
+
+        {% else %}
+            <p style="text-align:center; color:#FFB3E6;">
+                Your cart is empty.
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+

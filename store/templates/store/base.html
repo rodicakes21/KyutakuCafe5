@@ -1,0 +1,187 @@
+
+{% load static %}
+{% load humanize %}
+{% load tz %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Kyūtakuh's Cafē{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* BODY */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1A0B1F;
+            color: #FFE6F7;
+        }
+
+        /* HEADER */
+        .kuromi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: rgba(40, 15, 55, 0.8);
+            border-bottom: 2px solid #FF8AD4;
+            box-shadow: 0 0 15px rgba(255, 138, 212, 0.3);
+            backdrop-filter: blur(6px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .kuromi-header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #FFB3E6;
+            text-shadow: 0 0 12px #FF8AD4;
+        }
+
+        .header-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            box-shadow: 0 0 10px #FF8AD4;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar a {
+            color: #FFE6F7;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .navbar a:hover {
+            background: #FF8AD4;
+            color: #3A0033;
+            box-shadow: 0 0 10px #FF8AD4;
+        }
+
+        /* RESPONSIVE: small screens */
+        @media (max-width: 600px) {
+            .kuromi-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .header-img {
+                margin-bottom: 10px;
+            }
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 20px;
+            width: 90%;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="kuromi-header">
+        <div style="display: flex; align-items: center;">
+            <img src="{% static 'images/kyutaku.jfif' %}" alt="Kuromi" class="header-img">
+            <h1>Kyūtakuh's Cafē</h1>
+        </div>
+
+    <nav class="navbar">
+
+        <a href="{% url 'home' %}"
+        class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        Home
+        </a>
+
+        <a href="{% url 'about' %}"
+        class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+        About
+        </a>
+
+        <a href="{% url 'contact' %}"
+        class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+        Contact
+        </a>
+
+        <a href="{% url 'cart' %}"
+        class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">
+        Cart
+        </a>
+
+        <a href="{% url 'guest_receipts' %}" 
+        class="{% if request.resolver_match.url_name == 'guest_receipts' %}active{% endif %}">
+        Receipts
+        </a>
+
+
+        <!-- {% if user.is_authenticated %} -->
+        <!-- <a href="{% url 'my_receipts' %}">My Receipts</a> -->
+        <!-- {% endif %} -->
+<!-- 
+        {% if not user.is_authenticated %}
+            <a href="{% url 'receipt_lookup' %}">Find Receipt</a>
+        {% endif %} -->
+
+
+
+    </nav>
+
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER SECTION
+    <footer style="
+        margin-top:40px;
+        background:rgba(40,15,55,0.8);
+        border-top:2px solid #FF8AD4;
+        padding:25px 0;
+        text-align:center;
+        color:#FFE6F7;
+        box-shadow:0 -2px 15px rgba(255,138,212,0.3);
+    ">
+
+        <div style="margin-bottom:10px;">
+            <img src="{% static 'images/kyutaku.jfif' %}" 
+                alt="Kuromi" 
+                style="width:70px; border-radius:10px; box-shadow:0 0 10px #FF8AD4;">
+        </div>
+
+        <h3 style="color:#FFB3E6; margin-bottom:10px;">Kyūtakuh's Cafē</h3>
+
+        <p style="margin:3px 0;">📍 12th Avenue, Quezon City, Philippines</p>
+        <p style="margin:3px 0;">📞 0912-345-6789</p>
+        <p style="margin:3px 0;">✉ kyutakuhscafe@gmail.com</p>
+
+        <p style="margin-top:15px; color:#FF8AD4; font-size:14px;">
+            © {{ now|date:"Y" }} Kyūtakuh's Cafē — All Rights Reserved.
+        </p>
+    </footer> -->
+
+
+
+</body>
+</html>

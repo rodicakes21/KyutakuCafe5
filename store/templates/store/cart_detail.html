@@ -1,0 +1,17 @@
+<!-- store/templates/store/cart_detail.html -->
+<h2>Your Cart</h2>
+{% if cart.cart %}
+<ul>
+  {% for item in cart %}
+    <li>
+      {{ item.product.name }} - {{ item.quantity }} x ${{ item.price }} = ${{ item.total_price }}
+      <a href="{% url 'cart_remove' item.product.id %}">Remove</a>
+    </li>
+  {% endfor %}
+</ul>
+<p>Total: ${{ cart.get_total_price }}</p>
+<a href="#">Proceed to Checkout</a>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+

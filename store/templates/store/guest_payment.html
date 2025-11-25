@@ -1,0 +1,211 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Cashier Payment{% endblock %}
+
+{% block content %}
+
+<h2 style="color:#FFB3E6; text-align:center; margin-top:20px;">
+    Cashier Payment for Receipt #{{ order.id }}
+</h2>
+
+<!-- MAIN FLEX WRAPPER -->
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:50px;
+    margin-top:30px;
+    padding:20px;
+">
+
+    <!-- LEFT SIDE – PAYMENT BOX -->
+    <div style="
+        background:rgba(40,15,55,0.85);
+        padding:30px;
+        border-radius:20px;
+        border:2px solid #FF8AD4;
+        width:430px;
+        box-shadow:0 0 15px rgba(255,138,212,0.3);
+        color:#FFE6F7;
+    ">
+
+        <form id="paymentForm" method="POST" action="{% url 'save_guest_payment' order.id %}">
+            {% csrf_token %}
+
+            <label><strong>Cash Received:</strong></label><br>
+            <input id="cashInput" type="number" min="0" step="0.01" required
+                style="width:100%; padding:12px; border-radius:10px;
+                       border:1px solid #FF8AD4; background:#2b1038; color:white;
+                       margin-top:8px; font-size:16px;">
+
+            <p style="font-size:20px; margin-top:20px; text-align:right; color:#FFB3E6;">
+                <strong>Change:</strong> ₱<span id="changeOutput">0.00</span>
+            </p>
+
+            <!-- Hidden fields -->
+            <input type="hidden" name="cash" id="cashField">
+            <input type="hidden" name="change" id="changeField">
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit"
+                onclick="savePaymentValues()"
+                style="
+                    padding:14px;
+                    background:#FF8AD4;
+                    border:none;
+                    border-radius:12px;
+                    width:100%;
+                    margin-top:15px;
+                    color:#3A0033;
+                    font-weight:bold;
+                    font-size:18px;
+                    box-shadow:0 0 12px #FF8AD4;
+                ">
+                Submit Payment
+            </button>
+        </form>
+
+        <!-- PRINT ONLY BUTTON -->
+        <button onclick="printMini()"
+            style="
+                padding:14px;
+                margin-top:12px;
+                background:#FF66C4;
+                border:none;
+                border-radius:12px;
+                width:100%;
+                color:#3A0033;
+                font-weight:bold;
+                font-size:18px;
+                box-shadow:0 0 12px #FF66C4;
+            ">
+            Print Receipt Only
+        </button>
+
+    </div>
+
+
+    <!-- RIGHT SIDE – MINI RECEIPT -->
+    <div class="mini-receipt" id="printArea"
+         style="
+             width:300px;
+             background:#f8c7df;
+             color:#4b004b;
+             padding:22px;
+             border-radius:18px;
+             border:3px solid #ff7eba;
+             font-weight:bold;
+             box-shadow:0 0 10px rgba(255,105,180,0.4);
+         ">
+
+        <!-- HEADER / LOGO -->
+        <div style="text-align:center; margin-bottom:12px;">
+            <img src="{% static 'images/kyutaku_logo.jfif' %}" 
+                 style="width:85px; border-radius:12px;">
+
+            <div style="
+                font-size:22px;
+                font-weight:700;
+                color:#b4006e;
+                text-shadow:0 0 4px #ffd6ef;
+                margin-top:4px;
+            ">
+                ✿ Kyutaku's Café
+            </div>
+        </div>
+
+        <!-- STORE ADDRESS -->
+        <div style="text-align:center; font-size:13px; margin-bottom:15px;">
+            <div>Living in this hell country</div>
+            <div>12th Ave. Qc.</div>
+        </div>
+
+        <p><strong>Date:</strong> {{ order.created_at|date:"M d, Y" }} — {{ order.created_at|date:"h:i A" }}</p>
+        <p><strong>Order No.:</strong> {{ order.id }}</p>
+
+        <hr style="border:1px dashed #b4006e; margin:10px 0;">
+
+        {% for item in order.items.all %}
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span>{{ item.product.name }} ×{{ item.quantity }}</span>
+            <span>₱{{ item.total_price }}</span>
+        </div>
+        {% endfor %}
+
+        <hr style="border:1px dashed #b4006e; margin:10px 0;">
+
+        <div style="display:flex; justify-content:space-between;">
+            <strong>Total:</strong> <strong>₱{{ order.total_price }}</strong>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:5px;">
+            <strong>Cash:</strong> <span id="miniCash">₱0.00</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:5px;">
+            <strong>Change:</strong> <span id="miniChange">₱0.00</span>
+        </div>
+
+        <button onclick="printMini()"
+            style="
+                margin-top:12px;
+                padding:10px;
+                width:100%;
+                border:none;
+                border-radius:10px;
+                background:#ff4fa8;
+                color:white;
+                font-weight:bold;
+                cursor:pointer;
+                box-shadow:0 0 10px #ff4fa8;
+            ">
+            PRINT RECEIPT
+        </button>
+
+    </div> <!-- END mini receipt -->
+
+</div> <!-- END flex -->
+
+
+
+<!-- SCRIPT -->
+<script>
+const cashInput = document.getElementById("cashInput");
+const changeOutput = document.getElementById("changeOutput");
+const miniCash = document.getElementById("miniCash");
+const miniChange = document.getElementById("miniChange");
+
+const total = parseFloat("{{ order.total_price }}");
+
+// LIVE CHANGE UPDATE
+cashInput.addEventListener("input", () => {
+    const cash = parseFloat(cashInput.value) || 0;
+    const change = cash - total;
+
+    const fixed = change >= 0 ? change.toFixed(2) : "0.00";
+
+    changeOutput.textContent = fixed;
+    miniCash.textContent = "₱" + cash.toFixed(2);
+    miniChange.textContent = "₱" + fixed;
+});
+
+// SAVE PAYMENT
+function savePaymentValues() {
+    const cash = parseFloat(cashInput.value) || 0;
+    const change = cash - total;
+
+    document.getElementById("cashField").value = cash;
+    document.getElementById("changeField").value = change >= 0 ? change.toFixed(2) : 0;
+}
+
+// PRINT MINI RECEIPT
+function printMini() {
+    window.print();
+}
+</script>
+
+{% endblock %}
+
+
+

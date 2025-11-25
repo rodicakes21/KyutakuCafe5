@@ -1,0 +1,217 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Receipt - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+
+<style>
+    /* LAYOUT */
+    .receipt-container {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .main-receipt, .mini-receipt {
+        background: rgba(40,15,55,0.8);
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #FF8AD4;
+        color: #FFE6F7;
+    }
+
+    .main-receipt {
+        width: 60%;
+    }
+
+    .mini-receipt {
+        width: 280px;
+        background: #f8c7df;
+        color: #4b004b;
+        font-weight: bold;
+        font-size: 14px;
+        position: relative;
+    }
+
+    .mini-title {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .print-btn {
+        width: 100%;
+        margin-top: 15px;
+        padding: 8px;
+        background: #ff4fa8;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .print-btn:hover {
+        background: #ff2c97;
+    }
+
+    /* Print only mini-receipt */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #printArea, #printArea * {
+            visibility: visible;
+        }
+        #printArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+</style>
+
+<div class="receipt-container">
+
+    <!-- LEFT SIDE – MAIN RECEIPT -->
+    <div class="main-receipt">
+
+        <h2 style="text-align:center; color:#FFB3E6;">Receipt</h2>
+
+        <!-- Customer Info -->
+        <h3>Customer Information</h3>
+        <p><strong>Name:</strong> {{ order.customer_name }}</p>
+        <p><strong>Address:</strong> {{ order.address }}</p>
+        <p><strong>Email:</strong> {{ order.email }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+        <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+        <p><strong>Receipt Code:</strong> {{ order.receipt_code }}</p>
+
+
+        <!-- Items -->
+        <h3>Products Purchased</h3>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="border-bottom:2px solid #FF8AD4;">
+                    <th>Product</th>
+                    <th style="text-align:center;">Qty</th>
+                    <th style="text-align:right;">Price</th>
+                    <th style="text-align:right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td style="text-align:center;">{{ item.quantity }}</td>
+                    <td style="text-align:right;">₱{{ item.product.price }}</td>
+                    <td style="text-align:right;">₱{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3 style="text-align:right; margin-top:15px;">
+            Grand Total: ₱<span id="grandTotal">{{ order.total_price }}</span>
+        </h3>
+
+        <!-- Cash Input -->
+        <div style="text-align:right; margin-top:20px;">
+            <label><strong>Total Cash:</strong></label>
+            <input id="cashInput" type="number" min="0"
+                style="padding:8px; border-radius:6px; border:1px solid #FF8AD4; width:150px;">
+        </div>
+
+        <h3 style="text-align:right;">Change: ₱<span id="changeOutput">0.00</span></h3>
+
+    </div>
+
+<!-- RIGHT SIDE – MINI PRINT RECEIPT -->
+<div class="mini-receipt" id="printArea">
+
+    <!-- New Logo Format -->
+    <div style="text-align:center; margin-bottom:10px;">
+        <img src="/static/images/kyutaku_logo.jfif" style="width:80px; height:auto; vertical-align:middle; border-radius:10px;">
+<span style="
+    font-size:20px;
+    margin-left:6px;
+    vertical-align:middle;
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    color:#b4006e;
+    text-shadow: 0 0 3px #ffd6ef;
+">
+    ✿ Kyutaku's
+    Café
+</span>
+
+
+    </div>
+
+    <!-- Address -->
+    <div style="text-align:center; font-size:13px; margin-bottom:10px;">
+        <div>Living in this hell country</div>
+        <div>12th Ave. Qc.</div>
+    </div>
+
+    <p><strong>Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
+    <p><strong>Order No.:</strong> {{ order.id }}</p>
+
+    <hr style="border:1px dashed #b4006e;">
+
+    {% for item in order.items.all %}
+        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+            <span>{{ item.product.name }} ×{{ item.quantity }}</span>
+            <span>₱{{ item.total_price }}</span>
+        </div>
+    {% endfor %}
+
+    <hr style="border:1px dashed #b4006e;">
+
+    <div style="display:flex; justify-content:space-between;">
+        <strong>Total:</strong> <strong>₱{{ order.total_price }}</strong>
+    </div>
+
+    <div style="display:flex; justify-content:space-between;">
+        <strong>Cash:</strong> <span id="miniCash">₱0.00</span>
+    </div>
+
+    <div style="display:flex; justify-content:space-between;">
+        <strong>Change:</strong> <span id="miniChange">₱0.00</span>
+    </div>
+
+    <button class="print-btn" onclick="printMiniReceipt()">PRINT RECEIPT</button>
+
+</div>
+
+
+<script>
+    const cashInput = document.getElementById("cashInput");
+    const changeOutput = document.getElementById("changeOutput");
+
+    const miniCash = document.getElementById("miniCash");
+    const miniChange = document.getElementById("miniChange");
+
+    const grandTotal = parseFloat(document.getElementById("grandTotal").innerText);
+
+    cashInput.addEventListener("input", () => {
+        const cash = parseFloat(cashInput.value) || 0;
+        const change = cash - grandTotal;
+
+        const fixedChange = change >= 0 ? change.toFixed(2) : "0.00";
+
+        changeOutput.textContent = fixedChange;
+        miniCash.textContent = cash.toFixed(2);
+        miniChange.textContent = fixedChange;
+    });
+
+    function printMiniReceipt() {
+        window.print();
+    }
+</script>
+
+{% endblock %}
+

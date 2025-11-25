@@ -1,0 +1,28 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}Login - Kyūtakuh's Cafē{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>Login</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: #FF8AD4;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <label>Username</label>
+        <input type="text" name="username" required>
+
+        <label>Password</label>
+        <input type="password" name="password" required>
+
+        <button type="submit" class="btn">Login</button>
+    </form>
+    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+</div>
+{% endblock %}
